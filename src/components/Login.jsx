@@ -29,7 +29,9 @@ function Login() {
       
       alert(res.data.massage);
       setuser(res.data.user.username)
+       localStorage.setItem("username",res.data.user.username)
    setroll(res.data.user.role)
+   localStorage.setItem("userrole",res.data.user.role)
       if (res.data.massage == "sucessfully Login.") {
         navigate('/Home')
       }

@@ -32,6 +32,8 @@ const [hide, sethide] = useState(false)
     axios.post(`${ BASE_URL}/api/logout`, {}, {
       withCredentials: true
     })
+    localStorage.removeItem("username")
+    localStorage.removeItem("userrole")
     setlogin(false)
    navigate('/login')
   }

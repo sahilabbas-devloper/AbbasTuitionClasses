@@ -74,17 +74,21 @@ const fadeLeft = {
 
 
   return (
-    <div>
+    
+    
+    <div className="overflow-x-hidden">
+
+
         <div className='bg-gray-50 w-full h-15'>
        
       </div>
 
 
-    <div>
 
-      <section className='max-w-full min-h-screen bg-gray-50 flex flex-col items-center '>
 
-        <div className='w-full max-w-full mx-auto flex flex-col md:flex-row gap-5 px-4'>
+      <section className='w-full min min-w-screen bg-gray-50 flex flex-col items-center py-10'>
+
+        <div className=' w-full mx-auto flex flex-col md:flex-row gap-5 px-4'>
 
           {/* LEFT SECTION */}
           <motion.div
@@ -197,7 +201,7 @@ const fadeLeft = {
       <Page6 />
       <Page4 />
 
-    </div>
+  
 </div>
 
 
