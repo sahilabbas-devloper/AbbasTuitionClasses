@@ -48,7 +48,7 @@ function Login() {
       <div className='w-full h-15 bg-gray-50'>
 
       </div>
-      <section className='w-full min-h-screen bg-gray-50 max-w-full h-full flex flex-col ju items-center' >
+      <section className='w-full min-h-screen bg-gray-50 max-w-full h-full flex flex-col  items-center' >
         <div className='flex items-center flex-col h-full mt-25 md:mt-15 rounded-lg bg-white shadow-lg justify-center'>
           <div
             className='flex flex-col p-4 gap-2 w-90 '
