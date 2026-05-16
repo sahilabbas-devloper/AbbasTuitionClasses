@@ -41,7 +41,7 @@ function Header() {
 
   return (
     <div>
-      <nav className="fixed top-0 left-0 w-full h-16 md:justify-evenly bg-gray-100 shadow-md z-50 px-4 md:px-30 flex items-center gap-42 md:gap-70">
+      <nav className="fixed top-0 left-0 w-full h-16 md:justify-evenly bg-gray-100 shadow-md z-50 px-4 md:px-30 flex items-center gap-22 md:gap-70">
 
         {/* Left Side: Logo and User Info */}
         <div className="flex w-auto  items-center gap-4">
