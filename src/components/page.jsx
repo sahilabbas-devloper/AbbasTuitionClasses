@@ -48,7 +48,7 @@ function Page() {
       whileInView={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8 }}
       viewport={{ once: false, amount: 0.3 }}
-      className='w-full h-auto p-6 md:p-0 flex md:flex-wrap flex-wrap gap-10'
+      className='w-auto h-auto p-5 md:p-0 flex md:flex-wrap flex-wrap gap-2'
     >
 
       {/* Card 1 */}

@@ -26,7 +26,7 @@ function SendSMS() {
        <div className='flex items-center flex-col h-full mt-25 md:mt-15 rounded-lg bg-white shadow-lg justify-center'>
 
 
-                       <div className='w-100 bg-white flex shadow-lg flex-col rounded-xl p-4 gap-1 mt-20 '>
+                       <div className='w-auto bg-white flex shadow-lg flex-col rounded-xl p-4 gap-1 mt-20 '>
                         <h1 className='text-lg font-bold mb-8'>send a via sms for fees.</h1>
                         <label htmlFor="" className='text-md mb-1'>enter number</label>
                         <input type="text"

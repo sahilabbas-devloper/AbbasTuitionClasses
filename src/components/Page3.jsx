@@ -84,7 +84,7 @@ function Page3() {
         animate={floatAnimation}
       >
         <div className='flex items-center  justify-center '>
-          <div className='w-72 h-70 md:w-96 md:h-96 rounded-full pl-22 bg-white overflow-hidden shadow-2xl border-8 border-white'>
+          <div className='w-80 h-70 md:w-96 md:h-96 rounded-full pl-22 bg-white overflow-hidden shadow-2xl border-8 border-white'>
           <img
             className='w-full h-full  object-cover'
             src="aboutimg.jpg" 

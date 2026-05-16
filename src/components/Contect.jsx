@@ -59,13 +59,13 @@ function Contect() {
             </div>
 
             <section className='w-full  min-h-screen pt-10 bg-gray-50 max-w-full h-full flex flex-col  items-center'>
-                <div className='w-full max-w-6xl  justify-center flex flex-col md:gap-2 gap-20 md:flex-row '>
+                <div className='w-full   justify-center flex flex-col md:gap-2 gap-20 md:flex-row '>
 
 
                     <form onSubmit={update}>
 
 
-                        <div className='w-100 bg-white flex shadow-lg flex-col rounded-xl p-4 gap-1 '>
+                        <div className='w-auto bg-white flex  flex-col rounded-xl p-4 gap-1 '>
                             <h1 className='text-lg font-bold mb-8'>Modification of student data.</h1>
                             <label htmlFor="" className='text-md mb-1'>Student name</label>
                             <input type="text"
@@ -120,7 +120,7 @@ function Contect() {
                     </form>
 
 
-                    <div className='w-100 bg-white flex shadow-lg flex-col rounded-xl p-4 gap-1 '>
+                    <div className='w-auto bg-white flex  flex-col rounded-xl p-4 gap-1 '>
                         <h1 className='text-lg font-bold mb-8'>delete student</h1>
                         <label htmlFor="" className='text-md mb-1'>Student name</label>
                         <input type="text"

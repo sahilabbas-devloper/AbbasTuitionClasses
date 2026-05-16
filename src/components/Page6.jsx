@@ -75,7 +75,7 @@ function Page6() {
     {/* LEFT : FEEDBACK FORM */}
     <motion.div
       variants={itemVariants}
-      className='w-100 bg-white flex shadow-lg flex-col rounded-xl p-4 gap-1'
+      className='w-auto bg-white flex shadow-lg flex-col rounded-xl p-4 gap-1'
     >
       <h1 className='text-lg font-bold mb-8'>Send Feedback</h1>
 
@@ -115,7 +115,7 @@ function Page6() {
     {/* RIGHT : CONTACT INFO */}
     <motion.div
       variants={itemVariants}
-      className='w-100 bg-white rounded-2xl p-4 shadow-lg pt-4'
+      className='w-auto bg-white rounded-2xl p-4 shadow-lg pt-4'
     >
       <h1 className='text-3xl font-bold mb-10'>
         Lets <span className='text-blue-800'>Connect</span>
