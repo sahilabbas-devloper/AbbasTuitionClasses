@@ -8,7 +8,7 @@ function Massage() {
     const [Loading, setLoading] = useState(false)
 
      
-       const sendsms = async () => {
+   /*   const sendsms = async () => {
        
         setLoading(true)
         try {
@@ -21,7 +21,7 @@ function Massage() {
     } finally{
         setLoading(false)
     }
-}
+}*/
   return (
     <div>
         <div className='bg-gray-50 ,w-full h-15'>

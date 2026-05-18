@@ -8,7 +8,7 @@ function SendSMS() {
 
        Hello Dear Parent 👋
          Your child’s fees is pending.
-      Please pay before 10 Feb.
+      Please pay  your fees on  Time.
 
       – Abbas Institute Team
       🌐 www.Abbastuitionclasses.in`
