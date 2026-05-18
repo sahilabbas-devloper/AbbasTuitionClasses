@@ -45,7 +45,7 @@ function Massage() {
                        
 
                         <button
-                         onClick={sendsms}
+                        
                          disabled={Loading}
                             className=' w-full h-10 text-[13px] hover:bg-gray-600 font-semibold rounded-sm shadow-xl text-white flex items-center mt-5 justify-center mb-6 bg-gray-700'>
                             {Loading && (

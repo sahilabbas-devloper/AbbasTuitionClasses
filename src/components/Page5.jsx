@@ -7,13 +7,13 @@ const BASE_URL= import.meta.env.VITE_API_URL;
 
 function Page5() {
 
-const [feedback, setfeedback] = useState()
+const [feedback, setfeedback] = useState([])
 
 useEffect(() => {
   
 const getfeedbacks = async() => {
          const res = await axios.get(`${BASE_URL}/api/getfeedbacks`)
-         setfeedback(res.data) 
+         setfeedback(Array.isArray(res.data) ? res.data : res.data.feedbacks || []) 
         
       }
       getfeedbacks()

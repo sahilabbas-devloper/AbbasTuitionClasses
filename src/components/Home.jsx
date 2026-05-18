@@ -27,7 +27,9 @@ const {setlogin} = useContext(Authcontext)
     called.current = true;
 
     const func = async () => {
-      const res = await axios.get(`${BASE_URL}/api/Home`, {
+
+      try {
+         const res = await axios.get(`${BASE_URL}/api/Home`, {
         withCredentials: true
       })
 
@@ -37,6 +39,11 @@ const {setlogin} = useContext(Authcontext)
         setlogin(false)
         navigate('/Login')
       }
+      } catch (error) {
+        setlogin(false)
+       navigate('/Login')
+      }
+     
     }
     func()
 
