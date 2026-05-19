@@ -13,6 +13,7 @@ import Page4 from './Page4';
 import Page5 from './Page5';
 import Page6 from './Page6';
 import Page7 from './Page7';
+import Footer from "./Footer"
 const BASE_URL= import.meta.env.VITE_API_URL;
 
 function Home() {
@@ -166,14 +167,14 @@ const fadeLeft = {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.2 }}
-          className='flex items-center text-sm justify-evenly w-full h-30 bg-gray-800'
+          className='flex items-center text-sm justify-evenly w-full h-30 gap-8 bg-gray-800'
         >
 
-          <div className='flex items-center justify-center w-full h-auto flex-col border-r-2 border-white'>
+          <div className='flex items-center justify-center w-full h-auto flex-col border-r-2  border-white '>
             <div style={{ fontSize: "1rem", fontWeight: "bold", color: "white" }}>
              <CountUp start={0} end={120} duration={5.5} enableScrollSpy />+
             </div>
-            <h3 className='text-sm text-white'>current students</h3>
+            <h3 className='text-[12px] text-white'>current students</h3>
           </div>
 
           <div className='flex items-center justify-center w-full h-auto flex-col border-r-2 border-white'>
@@ -207,6 +208,7 @@ const fadeLeft = {
       <Page5 />
       <Page6 />
       <Page4 />
+      <Footer/>
 
   
 </div>

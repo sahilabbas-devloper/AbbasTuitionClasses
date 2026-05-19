@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from './components/Header'
 import Home from './components/Home'
-import Footer from './components/Footer'
 import Rajister from "./components/Rajister"
 import Login from "./components/Login";
 import Contect from "./components/Contect";
@@ -32,7 +31,7 @@ function App() {
             <Route path='/Massage' element={<Massage />} />
                 <Route path='/Forgotpass' element={<Forgotpass />} />
         </Routes>
-        <Footer />
+      
       </BrowserRouter>
     </div>
 

@@ -48,7 +48,7 @@ function Page() {
       whileInView={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.8 }}
       viewport={{ once: false, amount: 0.3 }}
-      className='w-auto h-auto p-5 md:p-0 flex md:flex-wrap flex-wrap gap-2'
+      className='w-full h-auto p-3 md:p-0 flex md:flex-wrap flex-wrap gap-2'
     >
 
       {/* Card 1 */}
@@ -90,7 +90,7 @@ function Page() {
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.7 }}
         viewport={{ once: false }}
         className='md:w-55 w-40 bg-white h-auto flex flex-col p-4 shadow-lg rounded-xl hover:scale-105 transition-transform duration-300'
       >

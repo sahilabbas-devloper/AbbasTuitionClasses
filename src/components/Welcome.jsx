@@ -1,7 +1,27 @@
-import { Link } from 'react-router-dom'
+import { Link,useNavigate  } from 'react-router-dom'
 import { motion } from 'framer-motion';
+import { useContext } from 'react';
+import axios from 'axios'
+import { Authcontext } from "../context/authcontext";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const WelcomePage = () => {
+
+ const {  login, setlogin } = useContext(Authcontext)
+
+   const navigate = useNavigate()
+
+   const logout = async () => {
+    axios.post(`${BASE_URL}/api/logout`, {}, {
+      withCredentials: true
+    })
+    localStorage.removeItem("username")
+    localStorage.removeItem("userrole")
+    setlogin(false)
+    navigate('/login')
+    window.location.reload()
+  }
+
     // Animation variants
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -20,8 +40,8 @@ const WelcomePage = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-           
-           
+
+
             <motion.div
                 className="text-center mt-25"
                 variants={containerVariants}
@@ -58,11 +78,26 @@ const WelcomePage = () => {
                     variants={itemVariants}
                     className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
                 >
-                    <Link to={"/Login"} className="bg-gray-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-700 transition">
-                        Login karen
-                    </Link>
+                    {login ? (
+                        <button
+                            onClick={logout}
+                            className="bg-gray-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition"
+                        >
+                            Logout 🡲
+                        </button>
+                    ) : (
+                        <Link
+                            to="/Login"
+                           className="bg-gray-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition"
+                        >
+                            Login 🡲
+                        </Link>
+                    )}
                     <Link to={"/Rajister"} className="bg-gray-100 text-gray-800 px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
-                        Rajister karen
+                        Rajister karen 🡲
+                    </Link>
+                    <Link to={"/Home"} className="bg-blue-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
+                        Go Home 🡲
                     </Link>
                 </motion.div>
 
