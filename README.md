@@ -1,16 +1,64 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+A real client project — a full-stack Progressive Web App for managing a tuition center's students, courses, announcements, and ID cards.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🌐 Live Site: abbastuitionclasses.netlify.app
+📱 Install as App: Click "Add to Home Screen" on mobile
+📁 GitHub: github.com/sahil/abbas-tuition
 
-## React Compiler
+⚠️ Note: This is a live production site for a real client. Admin credentials not included.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+👨‍🎓 Student Management — Add, edit, delete student records (CRUD)
+🪪 ID Card Generation — Auto-generate printable student ID cards
+📢 Announcements — Admin can post notices for students/parents
+📚 Course Management — Manage subjects, batches, and schedules
+🔐 Cookie-based Auth — Secure admin login with HTTP-only cookies
+📱 PWA Support — Installable on Android/iOS for easy daily use
+
+
+🛠️ Tech Stack
+LayerTechnologyFrontendReact.js, Tailwind CSSBackendNode.js, Express.jsDatabaseMongoDB, MongooseAuthJWT, HTTP-only CookiesPWAService Worker, Web App ManifestDeploymentNetlify (Frontend), Render (Backend)
+
+📋 Project Context
+This was delivered as a real client project for Abbas Jafer's tuition center in Lucknow. Built and deployed a production-ready application used by real students and staff. Includes proper admin dashboard, data persistence, and mobile-first design.
+
+🚀 Getting Started (Dev Setup)
+Installation
+bashgit clone https://github.com/sahil/abbas-tuition.git
+cd abbas-tuition
+
+# Backend
+cd backend && npm install
+
+# Frontend
+cd ../frontend && npm install
+Environment Variables
+envPORT=5000
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+CLIENT_URL=http://localhost:5173
+Run Locally
+bash# Backend
+cd backend && npm run dev
+
+# Frontend
+cd frontend && npm run dev
+
+📱 PWA Installation
+Android: Open in Chrome → tap menu → "Add to Home Screen"
+iOS: Open in Safari → tap Share → "Add to Home Screen"
+
+🧠 Key Learnings
+
+Delivered a real production project for an actual client
+Implemented ID card generation with dynamic data rendering and print CSS
+Built PWA with Service Worker for reliable mobile performance
+Cookie-based auth for secure admin panel without exposing tokens
+
+
+👨‍💻 Developer
+Sahil — Fresher MERN Stack Developer
+📧 Sa9300421@gmail.com | 📱 +91 7080254021
