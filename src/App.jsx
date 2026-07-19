@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {  Routes, Route,useLocation } from "react-router-dom";
 import Header from './components/Header'
 import Home from './components/Home'
 import Rajister from "./components/Rajister"
@@ -12,13 +12,19 @@ import WelcomePage from './components/Welcome';
 import SendSMS from "./components/SendSMS"
 function App() {
 
+  const location = useLocation();
+
+  // जिन paths पर Navbar नहीं दिखाना है, उन्हें यहाँ check कर लो
+  const hideNavbarPaths = ['/Login', '/login','/Rajister',]; // safe side के लिए small/capital दोनों रख सकते हैं
+  const shouldHideNavbar = hideNavbarPaths.includes(location.pathname);
+
 
   return (
 
     <div>
 
-    <BrowserRouter>
-        <Header />
+
+        {!shouldHideNavbar && <Header />}
         <Routes>
           <Route path='/' element={  <WelcomePage/>} />
           <Route path='/Home' element={<Home />} />
@@ -32,7 +38,7 @@ function App() {
                 <Route path='/Forgotpass' element={<Forgotpass />} />
         </Routes>
       
-      </BrowserRouter>
+  
     </div>
 
   )

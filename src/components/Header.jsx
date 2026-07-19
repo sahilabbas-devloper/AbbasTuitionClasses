@@ -1,158 +1,155 @@
-import React from 'react'
+import React, { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { useContext } from 'react';
-import { Authcontext } from "../context/authcontext";
+import { motion, AnimatePresence } from 'framer-motion'
+import { FaBars, FaTimes } from 'react-icons/fa'
+import { Authcontext } from "../context/authcontext"
+
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 function Header() {
-
   const { roll, user, login, setlogin } = useContext(Authcontext)
-
-
-  const [open, setopen] = useState(false)
-  const [hide, sethide] = useState(false)
-
+  const [open, setOpen] = useState(false)
   const navigate = useNavigate()
 
-  const toggle = () => {
-    if (open == false) {
-      setopen(true)
-    } else {
-      setopen(false)
+  const toggle = () => setOpen(!open)
+
+  const navLinks =
+    roll === "admin"
+      ? [
+          { label: "Home", to: "/Home" },
+          { label: "Add Student", to: "/Addstudent" },
+          { label: "View", to: "/View" },
+          { label: "Update", to: "/Contact" },
+          { label: "Message", to: "/Sms" },
+        ]
+      : roll === "user"
+      ? [{ label: "Home", to: "/Home" }]
+      : []
+
+  const logout = async () => {
+    try {
+      await axios.post(`${BASE_URL}/api/logout`, {}, { withCredentials: true })
+    } catch (error) {
+      console.log("logout error", error)
+    } finally {
+      localStorage.removeItem("username")
+      localStorage.removeItem("userrole")
+      setlogin(false)
+      setOpen(false)
+      navigate('/Login')
     }
   }
 
-
-
-
-  const logout = async () => {
-    axios.post(`${BASE_URL}/api/logout`, {}, {
-      withCredentials: true
-    })
-    localStorage.removeItem("username")
-    localStorage.removeItem("userrole")
-    setlogin(false)
-    navigate('/login')
-  }
-
-
   return (
     <div>
-      <nav className="fixed top-0 left-0 w-full h-16 md:justify-evenly bg-gray-100 shadow-md z-50 px-4 md:px-30 flex items-center gap-28 md:gap-70">
+      <nav className="fixed top-0 left-0 w-full h-16 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm z-50 px-4 md:px-10 flex items-center justify-between">
 
-        {/* Left Side: Logo and User Info */}
-        <div className="flex w-auto  items-center gap-4">
-          <Link to="/" className="flex items-center w-auto  gap-2">
+        {/* Left: Logo + User pill */}
+        <Link to="/" className="flex items-center gap-2 shrink-0">
+          <img
+            className="w-9 h-9 rounded-full object-cover border border-slate-100"
+            src="logo.png"
+            alt="logo"
+          />
+          <div className="hidden sm:flex items-center bg-slate-50 px-2 py-1 rounded-full gap-2 border border-slate-100">
             <img
-              className="w-10 h-10 rounded-full object-cover border border-gray-100 shadow-sm"
-              src="logo.png"
-              alt="logo"
+              className="w-5 h-5 rounded-full object-cover"
+              src="https://i.pinimg.com/736x/30/00/bc/3000bc660ae976e66c5d5b101ee714bf.jpg"
+              alt="user avatar"
             />
-            <div className=" flex sm:flex w-full items-center bg-blue-50 px-1 py-1 rounded-full gap-2 border border-blue-100">
-              <img
-                className="w-5 h-5 rounded-full object-cover"
-                src="https://i.pinimg.com/736x/30/00/bc/3000bc660ae976e66c5d5b101ee714bf.jpg"
-                alt="user"
-              />
-              <span className="text-xs font-bold text-gray-900 truncate w-auto">
-                {user || "Guest"}
-              </span>
-            </div>
-          </Link>
-        </div>
+            <span className="text-xs font-bold text-slate-800 truncate max-w-[100px]">
+              {user || "Guest"}
+            </span>
+          </div>
+        </Link>
 
-        {/* Middle: Navigation Links */}
-        {roll == "admin" && <div className="hidden lg:flex items-center mr-5  gap-8 text-gray-800 font-semibold text-sm">
-          {['Home', 'Addstudent', 'View', 'Update', 'Message'].map((item) => (
-            <motion.div key={item} whileHover={{ y: -2, color: '#1e3a8a' }}>
-              <Link
-                to={item === 'Update' ? '/Contect' : item === 'Message' ? '/Sms' : `/${item}`}
-                className="hover:text-blue-900 transition-colors"
-              >
-                {item}
-              </Link>
-            </motion.div>
-          ))}
-        </div>}
-        {roll == "user" && <div className="hidden lg:flex items-center mr-5  gap-8 text-gray-800 font-semibold text-sm">
-          {['Home'].map((item) => (
-            <motion.div key={item} whileHover={{ y: -2, color: '#1e3a8a' }}>
-              <Link
-                to={item === 'Update' ? '/Contect' : item === 'Message' ? '/Massage' : `/${item}`}
-                className="hover:text-blue-900 transition-colors"
-              >
-                {item}
-              </Link>
-            </motion.div>
-          ))}
-        </div>}
+        {/* Middle: Desktop nav links */}
+        {navLinks.length > 0 && (
+          <div className="hidden lg:flex items-center gap-8 text-slate-700 font-semibold text-sm">
+            {navLinks.map((item) => (
+              <motion.div key={item.label} whileHover={{ y: -2 }}>
+                <Link to={item.to} className="hover:text-blue-700 transition-colors">
+                  {item.label}
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
-        {/* Right Side: Auth Buttons */}
+        {/* Right: Auth buttons + hamburger */}
         <div className="flex items-center gap-3">
           {login ? (
             <button
               onClick={logout}
-              className="bg-gray-800 shadow-md hover:bg-gray-700 cursor-pointer transition-all w-20 h-9 text-xs font-bold text-white rounded-full flex items-center justify-center"
+              className="bg-slate-900 shadow-sm hover:bg-slate-700 transition-colors w-20 h-9 text-xs font-bold text-white rounded-full flex items-center justify-center"
             >
               Logout
             </button>
           ) : (
-            <Link
-              to="/Login"
-              className="bg-gray-800 shadow-md  hover:bg-gray-700 transition-all w-20 h-9 text-xs font-bold text-white rounded-full  flex md:flex items-center justify-center"
+            <>
+              <Link
+                to="/Login"
+                className="bg-slate-900 shadow-sm hover:bg-slate-700 transition-colors w-20 h-9 text-xs font-bold text-white rounded-full flex items-center justify-center"
+              >
+                Login
+              </Link>
+              <Link
+                to="/Rajister"
+                className="bg-slate-100 shadow-sm hover:bg-slate-200 transition-colors w-20 h-9 text-xs font-bold text-slate-900 rounded-full hidden md:flex items-center justify-center"
+              >
+                Register
+              </Link>
+            </>
+          )}
+
+          {/* Hamburger — visible for ANY role on small screens, not just admin */}
+          {(navLinks.length > 0 || !login) && (
+            <button
+              className="lg:hidden text-lg text-slate-800"
+              onClick={toggle}
+              aria-label={open ? "Close menu" : "Open menu"}
             >
-              Login
-            </Link>
+              {open ? <FaTimes /> : <FaBars />}
+            </button>
           )}
-
-          <Link
-            to="/Rajister"
-            className="bg-gray-300 shadow-md hover:bg-gray-200 transition-all w-20 h-9 text-xs font-bold text-black hidden  rounded-full md:flex items-center justify-center"
-          >
-            Register
-          </Link>
-
-
-
-          {roll === "admin" && (
-            <div className="md:hidden">
-              {open ? (
-                <button className="text-2xl font-bold" onClick={toggle}>
-                  ✕
-                </button>
-              ) : (
-                <button className="text-2xl font-bold" onClick={toggle}>
-                  &#9776;
-                </button>
-              )}
-            </div>
-          )}
-          <div className='w-30 h-auto fixed mt-56 shadow-lg bg-white ml-67.5'>
-
-          </div>
-
         </div>
-
-
       </nav>
 
+      {/* Mobile dropdown menu */}
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="lg:hidden fixed top-16 left-0 w-full bg-white border-b border-slate-100 shadow-md z-40 flex flex-col p-4 gap-1 text-sm font-semibold text-slate-700"
+          >
+            {navLinks.map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                onClick={() => setOpen(false)}
+                className="hover:text-blue-700 border-b border-slate-100 px-2 py-3 transition-colors"
+              >
+                {item.label}
+              </Link>
+            ))}
 
-      <div className='bg-gray-50 flex justify-end shadow-md'>
-        <nav className={`md:text-md  md:hidden z-10 fixed transition-transform duration-500 ease-in-out ${open ? "translate-y-0" : "-translate-y-150"} mt-16 w-full flex p-4 flex-col text-md font-bold text-gray-700 shadow-md  bg-gray-100 md:gap-15 `} >
-          <Link to="/Home" className=' hover:text-green-600  border-b px-4 py-2 '>Home</Link>
-          <Link to="/Addstudent" className=' hover:text-green-600 border-b px-4 py-4'>Addstudent</Link>
-          <Link to="/View" className=' hover:text-green-600 border-b px-4 py-4'>View</Link>
-          <Link to="/Contect" className=' hover:text-green-600 border-b px-4 py-4'>update</Link>
-          <Link to="/Massage" className=' hover:text-green-600 border-b px-4 py-4'>Message</Link>
-        </nav>
-      </div>
-
-
+            {!login && (
+              <Link
+                to="/Rajister"
+                onClick={() => setOpen(false)}
+                className="hover:text-blue-700 px-2 py-3 transition-colors"
+              >
+                Register
+              </Link>
+            )}
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </div>
-
   )
 }
 
