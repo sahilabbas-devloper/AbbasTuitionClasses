@@ -38,6 +38,7 @@ function Login() {
         localStorage.setItem("username", res.data.user.username)
         setroll(res.data.user.role)
         localStorage.setItem("userrole", res.data.user.role)
+        localStorage.setItem("isAuthenticated", "true");
         navigate('/Home')
       } else {
         setError(res.data.message || "Login failed. Please try again.")
@@ -55,7 +56,7 @@ function Login() {
     <div className="w-full min-h-screen flex bg-white">
 
       {/* LEFT BRAND PANEL */}
-      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-slate-900 to-slate-700 flex-col justify-between p-12 relative overflow-hidden">
+      <div className="hidden lg:flex w-1/2 bg-linear-to-br from-slate-900 to-slate-700 flex-col justify-between p-12 relative overflow-hidden">
 
         <div className="flex items-center gap-2 z-10">
           <img className="w-9 h-9 rounded-full bg-white p-1" src="logo.png" alt="logo" />
@@ -129,7 +130,7 @@ function Login() {
                 onChange={(e) => setrole(e.target.value)}
               >
                 <option value="" disabled>Select role</option>
-                <option value="admin">Admin</option>
+                <option value="admin">admin</option>
                 <option value="user">Student</option>
               </select>
             </div>

@@ -10,6 +10,7 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 function Header() {
   const { roll, user, login, setlogin } = useContext(Authcontext)
   const [open, setOpen] = useState(false)
+   const [Loading, setLoading] = useState()
   const navigate = useNavigate()
 
   const toggle = () => setOpen(!open)
@@ -17,24 +18,27 @@ function Header() {
   const navLinks =
     roll === "admin"
       ? [
-          { label: "Home", to: "/Home" },
-          { label: "Add Student", to: "/Addstudent" },
-          { label: "View", to: "/View" },
-          { label: "Update", to: "/Contact" },
-          { label: "Message", to: "/Sms" },
-        ]
+        { label: "Home", to: "/Home" },
+        { label: "Add Student", to: "/Addstudent" },
+        { label: "View", to: "/View" },
+        { label: "Update", to: "/Contact" },
+        { label: "Message", to: "/Sms" },
+      ]
       : roll === "user"
-      ? [{ label: "Home", to: "/Home" }]
-      : []
+        ? [{ label: "Home", to: "/Home" }]
+        : []
 
   const logout = async () => {
+    setLoading(true)
     try {
       await axios.post(`${BASE_URL}/api/logout`, {}, { withCredentials: true })
     } catch (error) {
       console.log("logout error", error)
     } finally {
+      setLoading(false)
       localStorage.removeItem("username")
       localStorage.removeItem("userrole")
+      localStorage.removeItem("isAuthenticated")
       setlogin(false)
       setOpen(false)
       navigate('/Login')
@@ -46,6 +50,21 @@ function Header() {
       <nav className="fixed top-0 left-0 w-full h-16 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm z-50 px-4 md:px-10 flex items-center justify-between">
 
         {/* Left: Logo + User pill */}
+
+        {Loading && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    
+    {/* Center White Box */}
+    <div className="bg-white px-8 py-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center min-w-[260px]">
+      <div className="w-10 h-10 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+      <p className="mt-4 text-slate-800 font-semibold text-sm">
+        Logout ho raha hai...
+      </p>
+    </div>
+
+  </div>
+      )}
+
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <img
             className="w-9 h-9 rounded-full object-cover border border-slate-100"
@@ -85,11 +104,13 @@ function Header() {
               className="bg-slate-900 shadow-sm hover:bg-slate-700 transition-colors w-20 h-9 text-xs font-bold text-white rounded-full flex items-center justify-center"
             >
               Logout
+             
             </button>
           ) : (
             <>
               <Link
                 to="/Login"
+                
                 className="bg-slate-900 shadow-sm hover:bg-slate-700 transition-colors w-20 h-9 text-xs font-bold text-white rounded-full flex items-center justify-center"
               >
                 Login

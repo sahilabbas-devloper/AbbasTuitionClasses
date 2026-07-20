@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import CountUp from 'react-countup'
-import { useEffect, useRef, useContext } from 'react'
+import { useEffect, useRef, useContext,useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from "framer-motion"
 import { FaArrowRight, FaPlay } from "react-icons/fa"
@@ -13,37 +13,60 @@ import Page5 from './Page5'
 import Page6 from './Page6'
 import Page7 from './Page7'
 import Footer from "./Footer"
+import AuthLoader from './AuthLoader'
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 function Home() {
+
+  const [Loading, setLoading] = useState()
   const { setlogin } = useContext(Authcontext)
   const navigate = useNavigate()
   const called = useRef(false)
 
-  useEffect(() => {
+  // LocalStorage check Top-Level par hoga
+  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
+
+  
+    useEffect(() => {
+
+      if (isAuthenticated) {
+      return; 
+    }
+
+
     if (called.current) return;
     called.current = true;
 
+    
+
     const func = async () => {
+
+      setLoading(true)
       try {
         const res = await axios.get(`${BASE_URL}/api/Home`, {
           withCredentials: true
         })
 
+        console.log(res)
         setlogin(true)
 
-        if (res.data.message === "Login required") {
+        if (res.data.massage === "Login required") {
           setlogin(false)
+          alert(res.data.massage)
           navigate('/Login')
         }
       } catch (error) {
         setlogin(false)
         navigate('/Login')
+        console.log("auth check error !",error)
+      }finally{
+        setLoading(false)
       }
     }
     func()
   }, [])
+  
 
   const fadeUp = {
     hidden: { opacity: 0, y: 20 },
@@ -83,6 +106,11 @@ function Home() {
     <div className="overflow-x-hidden bg-white">
 
       <div className="w-full h-15"></div>
+
+       {Loading && (
+                <AuthLoader/>
+              )}
+              
 
       {/* HERO SECTION */}
       <section className="relative w-full min-w-screen bg-white flex flex-col items-center pt-14 pb-32 px-4 overflow-hidden">

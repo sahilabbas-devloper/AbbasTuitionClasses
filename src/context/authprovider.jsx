@@ -4,7 +4,7 @@ import {Authcontext} from '../context/authcontext.js'
 
 const AuthProvider = ({ children }) => {
 
-  const [login,setlogin] = useState()
+  const [login,setlogin] = useState(true)
    const [user,setuser] = useState(localStorage.getItem("username"))
    const [roll,setroll] = useState(localStorage.getItem("userrole"))
   return (
