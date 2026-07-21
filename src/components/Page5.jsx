@@ -1,21 +1,46 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import { FaUser, FaQuoteLeft } from 'react-icons/fa'
+import { FaQuoteLeft, FaCheckCircle } from 'react-icons/fa'
 
 const BASE_URL = import.meta.env.VITE_API_URL;
 
-function Page5() {
+// Avatar ke liye background colors palette
+const AVATAR_COLORS = [
+  'bg-blue-600',
+  'bg-indigo-600',
+  'bg-emerald-600',
+  'bg-violet-600',
+  'bg-amber-600',
+  'bg-rose-600',
+  'bg-teal-600'
+];
 
+function Page5() {
   const [feedback, setfeedback] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const getfeedbacks = async () => {
+      // 1. Check if feedback is already cached in Session Storage
+      const cachedData = sessionStorage.getItem('app_feedbacks')
+      if (cachedData) {
+        setfeedback(JSON.parse(cachedData))
+        setLoading(false)
+        return
+      }
+
+      // 2. Fetch from API if not cached
       setLoading(true)
       try {
-        const res = await axios.get(`${BASE_URL}/api/getfeedbacks`)
-        setfeedback(Array.isArray(res.data) ? res.data : res.data.feedbacks || [])
+        const res = await axios.get(`${BASE_URL}/api/getfeedbacks`, {
+          withCredentials: true
+        })
+        const data = Array.isArray(res.data) ? res.data : res.data.feedbacks || []
+        
+        setfeedback(data)
+        // Store in sessionStorage so refresh/re-mount won't hit API again
+        sessionStorage.setItem('app_feedbacks', JSON.stringify(data))
       } catch (error) {
         console.log("fetch feedback error", error)
         setfeedback([])
@@ -23,6 +48,7 @@ function Page5() {
         setLoading(false)
       }
     }
+
     getfeedbacks()
   }, [])
 
@@ -32,6 +58,32 @@ function Page5() {
     const [name, domain] = email.split('@')
     if (!domain) return email
     return `${name.slice(0, 3)}***@${domain}`
+  }
+
+  // Get First Letter of Email or Name
+  const getInitial = (email) => {
+    if (!email) return "P"
+    return email.charAt(0).toUpperCase()
+  }
+
+  // Consistent color selection based on email string length
+  const getAvatarColor = (email = "") => {
+    let hash = 0
+    for (let i = 0; i < email.length; i++) {
+      hash += email.charCodeAt(i)
+    }
+    return AVATAR_COLORS[hash % AVATAR_COLORS.length]
+  }
+
+  // Format Date gracefully
+  const formatDate = (dateString) => {
+    if (!dateString) return "Recently"
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    })
   }
 
   const containerVariants = {
@@ -88,7 +140,7 @@ function Page5() {
           {loading ? (
             <div className="w-full flex gap-6 overflow-hidden px-4 md:px-9">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="w-64 h-44 flex-none rounded-2xl bg-slate-100 animate-pulse" />
+                <div key={i} className="w-72 h-48 flex-none rounded-2xl bg-slate-100 animate-pulse" />
               ))}
             </div>
           ) : feedback.length === 0 ? (
@@ -107,25 +159,35 @@ function Page5() {
             >
               {feedback.map((item, index) => (
                 <motion.div
-                  key={index}
+                  key={item._id || index}
                   variants={fadeUp}
                   className="w-72 flex-none snap-start bg-white border border-slate-100 flex flex-col p-6 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 rounded-2xl"
                 >
-                  <FaQuoteLeft className="text-blue-100 text-2xl mb-3" />
+                  <div className="flex justify-between items-center mb-3">
+                    <FaQuoteLeft className="text-blue-100 text-2xl" />
+                    {/* Date/Time Tag */}
+                    <span className="text-[10px] font-semibold text-slate-400">
+                      {formatDate(item.createdAt || item.date)}
+                    </span>
+                  </div>
 
                   <p className="text-[13px] text-slate-600 leading-relaxed mb-5 line-clamp-4">
                     {item.Massage}
                   </p>
 
                   <div className="flex items-center gap-3 mt-auto pt-4 border-t border-slate-50">
-                    <div className="flex items-center justify-center bg-slate-900 w-9 h-9 rounded-full text-white shrink-0">
-                      <FaUser className="text-xs" />
+                    {/* First Letter Dynamic Avatar */}
+                    <div className={`flex items-center justify-center ${getAvatarColor(item.Email)} w-9 h-9 rounded-full text-white font-bold text-sm shrink-0 shadow-sm`}>
+                      {getInitial(item.Email)}
                     </div>
-                    <div>
-                      <h3 className="text-[13px] font-bold text-slate-800">
+
+                    <div className="overflow-hidden">
+                      <h3 className="text-[13px] font-bold text-slate-800 truncate">
                         {maskEmail(item.Email)}
                       </h3>
-                      <p className="text-[11px] text-slate-400">Verified Parent</p>
+                      <p className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                        <FaCheckCircle className="text-[10px]" /> Verified Parent
+                      </p>
                     </div>
                   </div>
                 </motion.div>

@@ -1,4 +1,5 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
+import ReactDOM from 'react-dom' // 1. Portal ke liye import karein
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -8,22 +9,31 @@ import { Authcontext } from "../context/authcontext"
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 function Header() {
-  const { roll, user, login, setlogin } = useContext(Authcontext)
+  const { roll, user, login, setlogin, setUser, setRoll } = useContext(Authcontext)
   const [open, setOpen] = useState(false)
-   const [Loading, setLoading] = useState()
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const isAuth = localStorage.getItem("isAuthenticated")
+    if (!isAuth || isAuth === "false") {
+      if (typeof setlogin === 'function') setlogin(false)
+      if (typeof setUser === 'function') setUser("")
+      if (typeof setRoll === 'function') setRoll("")
+    }
+  }, [login])
 
   const toggle = () => setOpen(!open)
 
   const navLinks =
     roll === "admin"
       ? [
-        { label: "Home", to: "/Home" },
-        { label: "Add Student", to: "/Addstudent" },
-        { label: "View", to: "/View" },
-        { label: "Update", to: "/Contact" },
-        { label: "Message", to: "/Sms" },
-      ]
+          { label: "Home", to: "/Home" },
+          { label: "Add Student", to: "/Addstudent" },
+          { label: "View", to: "/View" },
+          { label: "Update", to: "/Contact" },
+          { label: "Message", to: "/Sms" },
+        ]
       : roll === "user"
         ? [{ label: "Home", to: "/Home" }]
         : []
@@ -35,52 +45,66 @@ function Header() {
     } catch (error) {
       console.log("logout error", error)
     } finally {
-      setLoading(false)
       localStorage.removeItem("username")
       localStorage.removeItem("userrole")
       localStorage.removeItem("isAuthenticated")
-      setlogin(false)
+      localStorage.clear()
+      
+      if (typeof setlogin === 'function') setlogin(false)
+      if (typeof setUser === 'function') setUser("")
+      if (typeof setRoll === 'function') setRoll("")
+      
       setOpen(false)
-      navigate('/Login')
+      setLoading(false)
+
+      window.location.href = '/login'
     }
   }
 
+  // 2. Separate Full Screen Overlay Component with Portal
+  const LogoutLoader = () => {
+    if (!loading) return null;
+
+    return ReactDOM.createPortal(
+      <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 backdrop-blur-sm w-screen h-screen">
+        {/* Center White Box */}
+        <div className="bg-white px-8 py-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center min-w-[260px] animate-in fade-in zoom-in duration-200">
+          <div className="w-10 h-10 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+          <p className="mt-4 text-slate-800 font-semibold text-sm">
+            Logout ho raha hai...
+          </p>
+        </div>
+      </div>,
+      document.body // Direct Body Tag par attach kar dega
+    );
+  };
+
   return (
     <div>
+      {/* Portal Loader Render */}
+      <LogoutLoader />
+
       <nav className="fixed top-0 left-0 w-full h-16 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-sm z-50 px-4 md:px-10 flex items-center justify-between">
 
         {/* Left: Logo + User pill */}
-
-        {Loading && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    
-    {/* Center White Box */}
-    <div className="bg-white px-8 py-6 rounded-2xl shadow-2xl flex flex-col items-center justify-center min-w-[260px]">
-      <div className="w-10 h-10 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
-      <p className="mt-4 text-slate-800 font-semibold text-sm">
-        Logout ho raha hai...
-      </p>
-    </div>
-
-  </div>
-      )}
-
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <img
             className="w-9 h-9 rounded-full object-cover border border-slate-100"
             src="logo.png"
             alt="logo"
           />
-          <div className="hidden sm:flex items-center bg-slate-50 px-2 py-1 rounded-full gap-2 border border-slate-100">
-            <img
-              className="w-5 h-5 rounded-full object-cover"
-              src="https://i.pinimg.com/736x/30/00/bc/3000bc660ae976e66c5d5b101ee714bf.jpg"
-              alt="user avatar"
-            />
-            <span className="text-xs font-bold text-slate-800 truncate max-w-[100px]">
-              {user || "Guest"}
-            </span>
-          </div>
+          {login && user && (
+            <div className="hidden sm:flex items-center bg-slate-50 px-2 py-1 rounded-full gap-2 border border-slate-100">
+              <img
+                className="w-5 h-5 rounded-full object-cover"
+                src="https://i.pinimg.com/736x/30/00/bc/3000bc660ae976e66c5d5b101ee714bf.jpg"
+                alt="user avatar"
+              />
+              <span className="text-xs font-bold text-slate-800 truncate max-w-[100px]">
+                {user}
+              </span>
+            </div>
+          )}
         </Link>
 
         {/* Middle: Desktop nav links */}
@@ -96,21 +120,20 @@ function Header() {
           </div>
         )}
 
-        {/* Right: Auth buttons + hamburger */}
+        {/* Right: Auth buttons */}
         <div className="flex items-center gap-3">
           {login ? (
             <button
               onClick={logout}
-              className="bg-slate-900 shadow-sm hover:bg-slate-700 transition-colors w-20 h-9 text-xs font-bold text-white rounded-full flex items-center justify-center"
+              disabled={loading}
+              className="bg-slate-900 shadow-sm hover:bg-slate-700 transition-colors w-20 h-9 text-xs font-bold text-white rounded-full flex items-center justify-center disabled:opacity-50"
             >
               Logout
-             
             </button>
           ) : (
             <>
               <Link
                 to="/Login"
-                
                 className="bg-slate-900 shadow-sm hover:bg-slate-700 transition-colors w-20 h-9 text-xs font-bold text-white rounded-full flex items-center justify-center"
               >
                 Login
@@ -124,7 +147,7 @@ function Header() {
             </>
           )}
 
-          {/* Hamburger — visible for ANY role on small screens, not just admin */}
+          {/* Hamburger button */}
           {(navLinks.length > 0 || !login) && (
             <button
               className="lg:hidden text-lg text-slate-800"

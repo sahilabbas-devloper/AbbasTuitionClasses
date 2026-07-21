@@ -39,7 +39,9 @@ function Login() {
         setroll(res.data.user.role)
         localStorage.setItem("userrole", res.data.user.role)
         localStorage.setItem("isAuthenticated", "true");
+       
         navigate('/Home')
+          window.location.href = '/home'
       } else {
         setError(res.data.message || "Login failed. Please try again.")
       }

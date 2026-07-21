@@ -24,13 +24,17 @@ function Page6() {
   const [status, setStatus] = useState(null)
   const [openFaq, setOpenFaq] = useState(null)
 
+
+
   const sendfeedback = async (e) => {
     e.preventDefault()
     setStatus(null)
     setLoading(true)
 
     try {
-      await axios.post(`${BASE_URL}/api/sendfeedback`, { email, massage })
+      await axios.post(`${BASE_URL}/api/sendfeedback`, { email, massage }, {
+        withCredentials: true
+      })
       setStatus({ type: 'success', text: "Thanks! Your feedback has been sent." })
       setemail('')
       setmassage('')
@@ -101,11 +105,10 @@ function Page6() {
 
             {status && (
               <div
-                className={`mb-4 px-4 py-2.5 rounded-lg text-[13px] font-medium border ${
-                  status.type === 'success'
+                className={`mb-4 px-4 py-2.5 rounded-lg text-[13px] font-medium border ${status.type === 'success'
                     ? 'bg-green-50 border-green-100 text-green-700'
                     : 'bg-red-50 border-red-100 text-red-600'
-                }`}
+                  }`}
               >
                 {status.text}
               </div>
@@ -117,7 +120,8 @@ function Page6() {
             <input
               id="email"
               name="email"
-              type="email"
+              type="email"             
+              autoComplete="email"
               required
               value={email}
               onChange={(e) => setemail(e.target.value)}
@@ -204,9 +208,8 @@ function Page6() {
                   >
                     <span className="text-sm font-semibold text-slate-800">{faq.q}</span>
                     <FaChevronDown
-                      className={`text-slate-400 text-xs shrink-0 ml-2 transition-transform duration-300 ${
-                        openFaq === i ? 'rotate-180' : ''
-                      }`}
+                      className={`text-slate-400 text-xs shrink-0 ml-2 transition-transform duration-300 ${openFaq === i ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
 
