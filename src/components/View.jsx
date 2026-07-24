@@ -40,7 +40,7 @@ export default function View() {
     setdetails(null)
 
     try {
-      const res = await axios.post(`http://localhost:4004/api/getdata`, { name }, {
+      const res = await axios.post(`${BASE_URL}/api/getdata`, { name }, {
         withCredentials: true
       })
       setdetails(res.data.Std)

@@ -21,7 +21,7 @@ function Addstudent() {
         setLoading(true)
 
         try {
-            const res = await axios.post(`http://localhost:4004/api/senddata`, { name, fathername, clas, address, number, schoolname, date }, {
+            const res = await axios.post(`${BASE_URL}/api/senddata`, { name, fathername, clas, address, number, schoolname, date }, {
                 withCredentials: true
             })
             alert(res.data.message)
