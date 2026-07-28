@@ -56,14 +56,26 @@ export default function View() {
     if (!cardRef.current) return
     setDownloading(true)
     try {
+      // give images (logo, signature) a moment to fully load before capture
+      const images = cardRef.current.querySelectorAll('img')
+      await Promise.all(Array.from(images).map(img => {
+        if (img.complete) return Promise.resolve()
+        return new Promise(resolve => {
+          img.onload = resolve
+          img.onerror = resolve
+        })
+      }))
+
       const canvas = await html2canvas(cardRef.current, {
         scale: 3,
         backgroundColor: '#ffffff',
         useCORS: true,
         scrollX: 0,
         scrollY: -window.scrollY,
-        windowWidth: document.documentElement.scrollWidth,
-        windowHeight: document.documentElement.scrollHeight
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+        width: cardRef.current.offsetWidth,
+        height: cardRef.current.offsetHeight
       })
       const imgData = canvas.toDataURL('image/png')
 
