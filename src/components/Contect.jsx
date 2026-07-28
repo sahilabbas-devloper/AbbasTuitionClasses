@@ -12,36 +12,67 @@ function Contect() {
     const [value, setvalue] = useState('')
     const [Loading, setLoading] = useState(false)
     const [DeleteLoading, setDeleteLoading] = useState(false)
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
+    const [deleteError, setDeleteError] = useState('')
+    const [deleteSuccess, setDeleteSuccess] = useState('')
+    const [confirmDelete, setConfirmDelete] = useState(false)
 
     const update = async (e) => {
 
         e.preventDefault()
         setLoading(true)
+        setError('')
+        setSuccess('')
 
         try {
-            const res = await axios.put(`${BASE_URL}/api/updatedata`, { username, field, value })
-            alert(res.data)
+            const res = await axios.put(`${BASE_URL}/api/updatedata`, { username, field, value }, {
+                withCredentials: true
+            })
+
+            setSuccess(res.data.message)
 
         } catch (error) {
             console.log("axios", error)
+            setError(error.response?.data?.message || "Something went wrong !")
         } finally {
             setLoading(false)
         }
 
     }
 
-    const deletestudent = async (e) => {
-
+    const askDeleteConfirm = (e) => {
         e.preventDefault()
         if (!student.trim()) return
+        setDeleteError('')
+        setDeleteSuccess('')
+        setConfirmDelete(true)
+    }
+
+    const cancelDelete = () => {
+        setConfirmDelete(false)
+    }
+
+    const deletestudent = async () => {
+
+        setConfirmDelete(false)
         setDeleteLoading(true)
+        setDeleteError('')
+        setDeleteSuccess('')
 
         try {
-            const res = await axios.delete(`${BASE_URL}/api/deletedata`, { data: { studentname: student } })
-            alert(res.data)
+            const res = await axios.delete(`${BASE_URL}/api/deletedata`, {
+                data: { studentname: student },
+                withCredentials: true
+            });
+            console.log(res)
+            setDeleteSuccess(res.data.message)
 
         } catch (error) {
             console.log("axios", error)
+            setDeleteError(
+                error.response?.data?.message || "Something went wrong. Please try again."
+            )
         } finally {
             setstudent('')
             setDeleteLoading(false)
@@ -84,6 +115,19 @@ function Contect() {
                         <p className='text-xs text-slate-400 mb-6 pl-10'>Change one field for an existing student.</p>
 
                         <div className='flex flex-col gap-5'>
+
+
+                            {error && (
+                                <div className="mb-4 px-4 py-2.5 rounded-lg bg-red-50 border border-red-100 text-red-600 text-[13px] font-medium">
+                                    {error}
+                                </div>
+                            )}
+
+                            {success && (
+                                <div className="mb-4 px-4 py-2.5 rounded-lg bg-green-50 border border-green-100 text-green-600 text-[13px] font-medium">
+                                    {success}
+                                </div>
+                            )}
 
                             <div className='flex flex-col gap-1.5'>
                                 <label className='text-sm font-medium text-slate-700 flex items-center gap-1.5'>
@@ -161,6 +205,18 @@ function Contect() {
                         </div>
                         <p className='text-xs text-slate-400 mb-6 pl-10'>This permanently removes the record. It can't be undone.</p>
 
+                        {deleteError && (
+                            <div className="mb-4 px-4 py-2.5 rounded-lg bg-red-50 border border-red-100 text-red-600 text-[13px] font-medium">
+                                {deleteError}
+                            </div>
+                        )}
+
+                        {deleteSuccess && (
+                            <div className="mb-4 px-4 py-2.5 rounded-lg bg-green-50 border border-green-100 text-green-600 text-[13px] font-medium">
+                                {deleteSuccess}
+                            </div>
+                        )}
+
                         <div className='flex flex-col gap-1.5'>
                             <label className='text-sm font-medium text-slate-700 flex items-center gap-1.5'>
                                 <User size={15} className='text-slate-400' /> Student name
@@ -168,7 +224,7 @@ function Contect() {
                             <input type="text"
                                 required
                                 value={student}
-                                onChange={(e) => setstudent(e.target.value)}
+                                onChange={(e) => { setstudent(e.target.value); setConfirmDelete(false) }}
                                 className='border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-red-600/10 focus:border-red-500 transition'
                                 placeholder='Enter the exact registered name'
                             />
@@ -179,22 +235,43 @@ function Contect() {
                             <span>Double check the name before deleting — this action cannot be reversed.</span>
                         </div>
 
-                        <button
-                            onClick={deletestudent}
-                            disabled={DeleteLoading}
-                            className='w-full mt-6 px-6 py-2.5 rounded-lg text-sm font-semibold text-white bg-red-600 hover:bg-red-700 active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-2'>
-                            {DeleteLoading ? (
-                                <>
-                                    <div className='w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin'></div>
-                                    Deleting...
-                                </>
-                            ) : (
-                                <>
-                                    <Trash2 size={16} />
-                                    Delete permanently
-                                </>
-                            )}
-                        </button>
+                        {confirmDelete ? (
+                            <div className='mt-6 border border-red-200 bg-red-50 rounded-lg p-4'>
+                                <p className='text-sm font-semibold text-red-700'>
+                                    Delete "{student}" permanently?
+                                </p>
+                                <p className='text-xs text-red-600 mt-1 mb-3'>This cannot be undone.</p>
+                                <div className='flex gap-3'>
+                                    <button
+                                        onClick={deletestudent}
+                                        disabled={DeleteLoading}
+                                        className='flex-1 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-red-600 hover:bg-red-700 active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-2'>
+                                        {DeleteLoading ? (
+                                            <>
+                                                <div className='w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin'></div>
+                                                Deleting...
+                                            </>
+                                        ) : (
+                                            'Yes, delete'
+                                        )}
+                                    </button>
+                                    <button
+                                        onClick={cancelDelete}
+                                        disabled={DeleteLoading}
+                                        className='flex-1 px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 bg-white border border-slate-300 hover:bg-slate-50 active:scale-[0.98] transition disabled:opacity-60'>
+                                        Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={askDeleteConfirm}
+                                disabled={DeleteLoading}
+                                className='w-full mt-6 px-6 py-2.5 rounded-lg text-sm font-semibold text-white bg-red-600 hover:bg-red-700 active:scale-[0.98] transition disabled:opacity-60 flex items-center justify-center gap-2'>
+                                <Trash2 size={16} />
+                                Delete permanently
+                            </button>
+                        )}
                     </div>
 
                 </div>

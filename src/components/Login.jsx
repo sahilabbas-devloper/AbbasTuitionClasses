@@ -33,7 +33,8 @@ function Login() {
     try {
       const res = await axios.post(`${BASE_URL}/api/Login`, { role, username, passward })
 
-      if (res.data.message === "successfully Login.") {
+      console.log(res)
+      if (res.data.message === "Successfully Login.") {
         setuser(res.data.user.username)
         localStorage.setItem("username", res.data.user.username)
         setroll(res.data.user.role)
@@ -41,11 +42,12 @@ function Login() {
         localStorage.setItem("isAuthenticated", "true");
        
         navigate('/Home')
-          window.location.href = '/home'
+        window.location.href = '/home'
       } else {
         setError(res.data.message || "Login failed. Please try again.")
       }
     } catch (error) {
+      console.log("error",error)
       setError(
         error.response?.data?.message || "Something went wrong. Please try again."
       )
