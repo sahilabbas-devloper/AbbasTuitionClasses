@@ -1,9 +1,12 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 import html2canvas from 'html2canvas-pro'
 import jsPDF from 'jspdf'
 
 const BASE_URL = import.meta.env.VITE_API_URL;
+
+
+
 
 // small inline icons — no extra package needed
 const Icon = {
@@ -28,6 +31,88 @@ export default function View() {
   const [Downloading, setDownloading] = useState(false)
   const cardRef = useRef(null)
 
+  // 🔽 suggestion / autocomplete state
+  const [ StudentNames,  setStudentNames] = useState()
+  const [ totalStudent,  settotalstudent] = useState(0)
+  const [suggestions, setSuggestions] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
+  const wrapperRef = useRef(null)
+
+
+  useEffect(() => {
+  const fetchNames = async () => {
+    try {
+      const res = await axios.get(`${BASE_URL}/api/getallnames`, {
+        withCredentials: true
+      })
+      setStudentNames(res.data.names || [])
+      settotalstudent(res.data.count)
+    } catch (error) {
+      console.log('fetchNames error', error)
+    } finally {
+      setLoadingNames(false)
+    }
+  }
+  fetchNames()
+}, [])
+
+  // input change hote hi filter karo
+  const handleNameChange = (e) => {
+    const value = e.target.value
+    setname(value)
+    setActiveIndex(-1)
+
+    if (value.trim().length === 0) {
+      setSuggestions([])
+      setShowSuggestions(false)
+      return
+    }
+
+    const filtered = StudentNames.filter((n) =>
+      n.toLowerCase().includes(value.toLowerCase())
+    )
+    setSuggestions(filtered)
+    setShowSuggestions(filtered.length > 0)
+  }
+
+  // suggestion pe click -> naam input me set karo, dropdown band karo
+  const handleSuggestionClick = (selectedName) => {
+    setname(selectedName)
+    setSuggestions([])
+    setShowSuggestions(false)
+    setActiveIndex(-1)
+  }
+
+  // keyboard se bhi navigate kar sako (optional but useful)
+  const handleKeyDown = (e) => {
+    if (!showSuggestions || suggestions.length === 0) return
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActiveIndex((prev) => (prev + 1) % suggestions.length)
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex((prev) => (prev <= 0 ? suggestions.length - 1 : prev - 1))
+    } else if (e.key === 'Enter' && activeIndex >= 0) {
+      e.preventDefault()
+      handleSuggestionClick(suggestions[activeIndex])
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false)
+    }
+  }
+
+  // input ke bahar click karne par dropdown band ho jaye
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   const find = async (e) => {
     e.preventDefault()
     if (!name.trim()) {
@@ -35,6 +120,7 @@ export default function View() {
       return
     }
 
+    setShowSuggestions(false)
     setLoading(true)
     setErrorMsg('')
     setdetails(null)
@@ -119,17 +205,41 @@ export default function View() {
           <h1 className='text-2xl sm:text-3xl font-bold text-slate-800'>
             Find student <span className='text-blue-700'>details</span>
           </h1>
-          <p className='text-sm text-slate-500 mt-1 mb-5'>Search using the student's registered name.</p>
+          <p className='text-sm text-slate-500 mt-1 '>Search using the student's registered name.</p>
+          <p className='text-sm text-slate-500 mt-1 mb-4'>total student - {totalStudent}</p>
 
           <form onSubmit={find} className='flex flex-col sm:flex-row gap-3'>
-            <div className='relative flex-1'>
+            <div className='relative flex-1' ref={wrapperRef}>
               <Icon.search className='w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2' />
               <input type="text"
                 required
-                onChange={(e) => setname(e.target.value)}
+                value={name}
+                onChange={handleNameChange}
+                onKeyDown={handleKeyDown}
+                onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true) }}
+                autoComplete="off"
                 className='w-full outline-none pl-10 pr-3 py-2.5 bg-white h-11 rounded-lg border border-slate-300 shadow-sm focus:ring-2 focus:ring-blue-800/10 focus:border-blue-600 transition text-sm'
                 placeholder='Enter student name'
               />
+
+              {/* suggestion dropdown */}
+              {showSuggestions && (
+                <ul className='absolute z-20 left-0 right-0 mt-1.5 bg-white border border-slate-200 rounded-lg shadow-lg max-h-56 overflow-y-auto'>
+                  {suggestions.map((sug, idx) => (
+                    <li
+                      key={sug + idx}
+                      onMouseDown={() => handleSuggestionClick(sug)}
+                      onMouseEnter={() => setActiveIndex(idx)}
+                      className={`px-4 py-2.5 text-sm cursor-pointer flex items-center gap-2 ${
+                        idx === activeIndex ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      <Icon.user className='w-3.5 h-3.5 text-slate-400 shrink-0' />
+                      <span className='truncate'>{sug}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
 
             <button
@@ -278,7 +388,7 @@ function Field({ icon, label, value, span2 }) {
       <p className='flex items-center gap-1.5 text-[10.5px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5'>
         {icon} {label}
       </p>
-      <p className='font-semibold text-slate-800 break-words'>{value}</p>
+      <p className='font-semibold text-slate-800 wrap-words'>{value}</p>
     </div>
   )
 }
