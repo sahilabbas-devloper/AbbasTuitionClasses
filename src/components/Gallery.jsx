@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { galleryData } from '../data/galleryData';
+import { galleryData } from '../data/galleryData.js';
 
 const Gallery = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
