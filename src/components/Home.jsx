@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from "framer-motion"
 import { FaArrowRight, FaPlay } from "react-icons/fa"
 import { Authcontext } from "../context/authcontext"
+import Gallery from './Gallery'
 import Page from './page'
 import Page3 from './Page3'
 import Page4 from './Page4'
@@ -250,6 +251,7 @@ function Home() {
 
       </section>
 
+      <Gallery/>
       <Page />
       <Page3 />
       <Page7 />
