@@ -2,6 +2,7 @@ import { Link,useNavigate  } from 'react-router-dom'
 import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import axios from 'axios'
+import {FaWhatsapp} from 'react-icons/fa'
 import { Authcontext } from "../context/authcontext";
 const BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -78,26 +79,14 @@ const WelcomePage = () => {
                     variants={itemVariants}
                     className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
                 >
-                    {login ? (
-                        <button
-                            onClick={logout}
-                            className="bg-gray-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition"
-                        >
-                            Logout 🡲
-                        </button>
-                    ) : (
-                        <Link
-                            to="/Login"
-                           className="bg-gray-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition"
-                        >
-                            Login 🡲
-                        </Link>
-                    )}
-                    <Link to={"/Rajister"} className="bg-gray-100 text-gray-800 px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
-                        Rajister karen 🡲
-                    </Link>
+                  <a 
+                    href="https://wa.me/917985106600?text=Hello%20ATC,%20I%20want%20admission%20details"
+              target="_blank"
+              rel="noreferrer"
+              className="w-full py-3.5 rounded-2xl bg-emerald-50 text-emerald-700 font-bold text-xs border border-emerald-200 flex items-center justify-center gap-2 active:scale-95 transition"
+                  > Chat on WhatsApp <FaWhatsapp className='text-xl'/></a>
                     <Link to={"/Home"} className="bg-blue-800 text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition">
-                        Go Home 🡲
+                        Go Dashboard 🡲
                     </Link>
                 </motion.div>
 

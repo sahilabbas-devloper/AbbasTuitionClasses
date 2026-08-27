@@ -24,11 +24,9 @@ const Gallery = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
   const thumbnailContainerRef = useRef(null);
 
-  const categories = ['All', 'Classroom', 'Events', 'Achievements', "Batches"];
+  const categories = ['All', 'Announcements', 'Batches', 'Classroom', 'Achievements'];
 
   // Filter photos
   const filteredPhotos = selectedCategory === 'All'
@@ -37,7 +35,7 @@ const Gallery = () => {
 
   const activePhoto = filteredPhotos[activeIndex] || filteredPhotos[0];
 
-  // Auto-Play Timer (4 seconds)
+  // 1. Auto-Play Timer (Apne aap badlega)
   useEffect(() => {
     if (isPaused || filteredPhotos.length <= 1) return;
 
@@ -46,45 +44,19 @@ const Gallery = () => {
     }, 4000);
 
     return () => clearInterval(timer);
-  }, [activeIndex, isPaused, filteredPhotos.length]);
+  }, [isPaused, filteredPhotos.length]);
 
-  // Thumbnail auto-scroll on active change
+  // 2. Safe Thumbnail Scroll (Page jump nahi karega, sirf container scroll hoga)
   useEffect(() => {
     if (thumbnailContainerRef.current) {
-      const activeThumb = thumbnailContainerRef.current.children[activeIndex];
+      const container = thumbnailContainerRef.current;
+      const activeThumb = container.children[activeIndex];
       if (activeThumb) {
-        activeThumb.scrollIntoView({
-          behavior: 'smooth',
-          inline: 'center',
-          block: 'nearest'
-        });
+        const offset = activeThumb.offsetLeft - (container.clientWidth / 2) + (activeThumb.clientWidth / 2);
+        container.scrollTo({ left: offset, behavior: 'smooth' });
       }
     }
   }, [activeIndex]);
-
-  // Swipe Handlers for Mobile
-  const handleTouchStart = (e) => {
-    setIsPaused(true);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    setIsPaused(false);
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    if (distance > 50) {
-      setActiveIndex((prev) => (prev + 1) % filteredPhotos.length);
-    }
-    if (distance < -50) {
-      setActiveIndex((prev) => (prev === 0 ? filteredPhotos.length - 1 : prev - 1));
-    }
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
 
   const handleCategoryChange = (cat) => {
     setSelectedCategory(cat);
@@ -93,7 +65,7 @@ const Gallery = () => {
 
   return (
     <section className="py-8 sm:py-16 px-3 sm:px-6 max-w-5xl mx-auto font-sans select-none">
-      {/* Section Header */}
+      {/* Header */}
       <div className="text-center sm:text-left mb-6">
         <span className="inline-block text-[11px] sm:text-xs font-bold uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 mb-2">
           Campus Life & Moments
@@ -125,16 +97,15 @@ const Gallery = () => {
 
       {filteredPhotos.length > 0 ? (
         <div className="space-y-3">
-          {/* Main Visual Showcase (Tall on Mobile) */}
+          {/* Main Visual Showcase */}
           <div
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={() => setIsPaused(true)}
+            onTouchEnd={() => setIsPaused(false)}
             className="relative w-full aspect-[4/5] sm:aspect-[16/10] md:aspect-[16/9] rounded-3xl overflow-hidden shadow-xl border border-gray-100 bg-gray-50"
           >
-            {/* Main Clean Image */}
+            {/* Main Image */}
             <img
               key={activePhoto.id}
               src={activePhoto.src}
@@ -142,7 +113,7 @@ const Gallery = () => {
               className="w-full h-full object-cover transition-all duration-500"
             />
 
-            {/* Top Animated Progress Indicators */}
+            {/* Top Indicators */}
             <div className="absolute top-4 left-4 right-4 flex items-center gap-1.5 z-20">
               {filteredPhotos.map((_, idx) => (
                 <div
@@ -163,10 +134,10 @@ const Gallery = () => {
               ))}
             </div>
 
-            {/* Subtle Bottom Gradient for Text Contrast */}
+            {/* Bottom Gradient for Contrast */}
             <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none"></div>
 
-            {/* Bottom Caption Pill */}
+            {/* Caption Pill */}
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between z-20">
               <div className="bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl shadow-lg border border-white/50 max-w-[80%]">
                 <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest block">
@@ -183,16 +154,16 @@ const Gallery = () => {
               </span>
             </div>
 
-            {/* Desktop Navigation Arrows */}
+            {/* Arrows */}
             <button
               onClick={() => setActiveIndex((prev) => (prev === 0 ? filteredPhotos.length - 1 : prev - 1))}
-              className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl items-center justify-center transition cursor-pointer"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl flex items-center justify-center transition cursor-pointer z-30"
             >
               ❮
             </button>
             <button
               onClick={() => setActiveIndex((prev) => (prev + 1) % filteredPhotos.length)}
-              className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl items-center justify-center transition cursor-pointer"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white text-gray-800 shadow-xl flex items-center justify-center transition cursor-pointer z-30"
             >
               ❯
             </button>
@@ -201,7 +172,7 @@ const Gallery = () => {
           {/* Filmstrip Mini Thumbnails */}
           <div
             ref={thumbnailContainerRef}
-            className="flex items-center gap-2.5 overflow-x-auto py-2 scrollbar-none scroll-smooth"
+            className="flex items-center gap-2.5 overflow-x-auto py-2 scrollbar-none"
           >
             {filteredPhotos.map((item, index) => {
               const isCurrent = index === activeIndex;
@@ -211,7 +182,7 @@ const Gallery = () => {
                   onClick={() => {
                     setActiveIndex(index);
                     setIsPaused(true);
-                    setTimeout(() => setIsPaused(false), 3000);
+                    setTimeout(() => setIsPaused(false), 4000);
                   }}
                   className={`relative flex-shrink-0 w-20 sm:w-24 h-14 sm:h-16 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 border-2 ${
                     isCurrent
