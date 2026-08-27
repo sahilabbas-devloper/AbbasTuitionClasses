@@ -76,7 +76,7 @@ function Footer() {
             <div className="space-y-2 pt-1 text-xs text-gray-700">
               <div className="flex items-start gap-2.5">
                 <FaMapMarkerAlt className="text-blue-600 shrink-0 mt-0.5" />
-                <span>Main Campus, Near Degree College Road, Uttar Pradesh, India</span>
+                <span>Main Campus, Near akber ka imam bada pandariba road jaunpur, Uttar Pradesh, India</span>
               </div>
               <div className="flex items-center gap-2.5">
                 <FaPhoneAlt className="text-blue-600 shrink-0" />
@@ -84,7 +84,7 @@ function Footer() {
               </div>
               <div className="flex items-center gap-2.5">
                 <FaEnvelope className="text-blue-600 shrink-0" />
-                <span className="font-medium">contact@abbastuition.com</span>
+                <span className="font-medium">abbastutitionclasses.netlify.app</span>
               </div>
             </div>
 
