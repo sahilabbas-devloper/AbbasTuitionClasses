@@ -13,6 +13,8 @@ function Addstudent() {
     const [number, setnumber] = useState('')
     const [schoolname, setschoolname] = useState('')
     const [date, setdate] = useState('')
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
     const [Loading, setLoading] = useState(false)
 
     const send = async (e) => {
@@ -24,11 +26,10 @@ function Addstudent() {
             const res = await axios.post(`${BASE_URL}/api/senddata`, { name, fathername, clas, address, number, schoolname, date }, {
                 withCredentials: true
             })
-            alert(res.data.message)
-
+           setSuccess(res.data.message)
         } catch (error) {
             console.log("axios", error)
-            alert(error.response?.data?.message || "Something went wrong !")
+            setError(error.response?.data?.message || "Something went wrong !")
         } finally {
             setLoading(false)
             setname('')
@@ -73,6 +74,19 @@ function Addstudent() {
                         <div className='mb-6'>
                             <p className='text-xs font-semibold tracking-wide text-slate-400 uppercase'>Student details</p>
                         </div>
+
+
+                         {error && (
+                                <div className="mb-4 px-4 py-2.5 rounded-lg bg-red-50 border border-red-100 text-red-600 text-[13px] font-medium">
+                                    {error}
+                                </div>
+                            )}
+
+                            {success && (
+                                <div className="mb-4 px-4 py-2.5 rounded-lg bg-green-50 border border-green-100 text-green-600 text-[13px] font-medium">
+                                    {success}
+                                </div>
+                            )}
 
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-5'>
 
